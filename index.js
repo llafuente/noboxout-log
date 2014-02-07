@@ -38,7 +38,8 @@ console.info = function() {
     require("colors");
 
     var util = require("util"),
-        inspect = util.inspect;
+        inspect = util.inspect,
+        ArrayMap = Array.prototype.map;
 
     module.exports = {
         logLiteral: "",
@@ -53,7 +54,7 @@ console.info = function() {
                 return;
             }
 
-            var log = Array.prototype.map.call(arguments, function (v) {
+            var log = ArrayMap.call(arguments, function (v) {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
@@ -64,7 +65,7 @@ console.info = function() {
                 return;
             }
 
-            var log = Array.prototype.map.call(arguments, function (v) {
+            var log = ArrayMap.call(arguments, function (v) {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
@@ -75,7 +76,7 @@ console.info = function() {
                 return;
             }
 
-            var log = Array.prototype.map.call(arguments, function (v) {
+            var log = ArrayMap.call(arguments, function (v) {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
@@ -86,7 +87,7 @@ console.info = function() {
                 return;
             }
 
-            var log = Array.prototype.map.call(arguments, function (v) {
+            var log = ArrayMap.call(arguments, function (v) {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
@@ -97,7 +98,7 @@ console.info = function() {
                 return;
             }
 
-            var log = Array.prototype.map.call(arguments, function (v) {
+            var log = ArrayMap.call(arguments, function (v) {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
@@ -108,7 +109,7 @@ console.info = function() {
                 return;
             }
 
-            var log = Array.prototype.map.call(arguments, function (v) {
+            var log = ArrayMap.call(arguments, function (v) {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
