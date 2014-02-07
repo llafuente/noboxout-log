@@ -1,3 +1,4 @@
+var sep = require("path").sep;
 function __callee() {
     var orig = Error.prepareStackTrace,
         err,
@@ -14,18 +15,18 @@ function __callee() {
 
     Error.prepareStackTrace = orig;
 
-    return stack[1].getFileName().split("/").slice(-1)[0] + ":" + stack[1].getLineNumber();
+    return stack[1].getFileName().split(sep).slice(-1)[0] + ":" + stack[1].getLineNumber();
 }
 
 // for more debug control
 var old_log = console.log;
-console.log = function() {
+console.log = function () {
     var ar = Array.prototype.slice.call(arguments);
     ar.unshift(__callee());
     old_log.apply(console, ar);
 };
 var old_info = console.info;
-console.info = function() {
+console.info = function () {
     var ar = Array.prototype.slice.call(arguments);
     ar.unshift(__callee());
     old_info.apply(console, ar);
@@ -46,9 +47,6 @@ console.info = function() {
         logLevel: 7,
         logMute: false,
 
-        addLogLiteral: function (literal) {
-            this.logLiteral = literal;
-        },
         verbose: function () {
             if (this.logMute || this.logLevel < 6) {
                 return;
