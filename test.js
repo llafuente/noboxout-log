@@ -27,7 +27,7 @@ for (i = 7; i > -1; --i) {
     rainbow();
 }
 
-log.addLogLiteral(" -- ");
+log.logLiteral = " @ ";
 
 for (i = 7; i > -1; --i) {
 
