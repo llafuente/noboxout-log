@@ -4,8 +4,10 @@ var log = require("./index.js");
 function rainbow() {
     log.verbose("verbose");
     log.debug("debug");
-    log.err("error");
+    log.log("log");
+    log.info("info");
     log.warn("warning");
+    log.err("error");
 }
 
 
@@ -18,23 +20,18 @@ log.logMute = true;
 rainbow();
 log.logMute = false;
 
-console.log("level 4");
-log.logLevel = 4;
-rainbow();
+for (i = 7; i > -1; --i) {
 
-console.log("level 3");
-log.logLevel = 3;
-rainbow();
+    console.log("level " + i);
+    log.logLevel = i;
+    rainbow();
+}
 
-console.log("level 2");
-log.logLevel = 2;
-rainbow();
+log.addLogLiteral(" -- ");
 
-console.log("level 1");
-log.logLevel = 1;
-rainbow();
+for (i = 7; i > -1; --i) {
 
-
-console.log("level 0");
-log.logLevel = 0;
-rainbow();
+    console.log("level " + i);
+    log.logLevel = i;
+    rainbow();
+}

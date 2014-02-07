@@ -14,8 +14,23 @@ function __callee() {
 
     Error.prepareStackTrace = orig;
 
-    return stack[2].getFileName().split("/").slice(-1)[0] + ":" + stack[2].getLineNumber();
+    return stack[1].getFileName().split("/").slice(-1)[0] + ":" + stack[1].getLineNumber();
 }
+
+// for more debug control
+var old_log = console.log;
+console.log = function() {
+    var ar = Array.prototype.slice.call(arguments);
+    ar.unshift(__callee());
+    old_log.apply(console, ar);
+};
+var old_info = console.info;
+console.info = function() {
+    var ar = Array.prototype.slice.call(arguments);
+    ar.unshift(__callee());
+    old_info.apply(console, ar);
+};
+
 
 (function () {
     "use strict";
@@ -26,7 +41,36 @@ function __callee() {
         inspect = util.inspect;
 
     module.exports = {
+        logLiteral: "",
+        logLevel: 7,
+        logMute: false,
+
+        addLogLiteral: function (literal) {
+            this.logLiteral = literal;
+        },
         verbose: function () {
+            if (this.logMute || this.logLevel < 6) {
+                return;
+            }
+
+            var log = Array.prototype.map.call(arguments, function (v) {
+                return "string" === typeof v ? v : inspect(v);
+            }).join(" ");
+
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[vrb]", __callee(), " ", this.logLiteral, log].join("").cyan, "\n");
+        },
+        debug: function () {
+            if (this.logMute || this.logLevel < 5) {
+                return;
+            }
+
+            var log = Array.prototype.map.call(arguments, function (v) {
+                return "string" === typeof v ? v : inspect(v);
+            }).join(" ");
+
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[dbg]", __callee(), " ", this.logLiteral, log].join("").blue, "\n");
+        },
+        log: function () {
             if (this.logMute || this.logLevel < 4) {
                 return;
             }
@@ -35,9 +79,9 @@ function __callee() {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.print(new Date().toISOString().slice(0, 19).replace("T", " "), "[vrb]", __callee(), " ", log.cyan, "\n");
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[log]", __callee(), " ", this.logLiteral, log].join("").white, "\n");
         },
-        debug: function () {
+        info: function () {
             if (this.logMute || this.logLevel < 3) {
                 return;
             }
@@ -46,7 +90,7 @@ function __callee() {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.print(new Date().toISOString().slice(0, 19).replace("T", " "), "[dbg]", __callee(), " ", log.green, "\n");
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[inf]", __callee(), " ", this.logLiteral, log].join("").green, "\n");
         },
         warn: function () {
             if (this.logMute || this.logLevel < 2) {
@@ -57,7 +101,7 @@ function __callee() {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[wrn]", __callee(), " ", log.yellow].join(""));
+            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[wrn]", __callee(), " ", this.logLiteral, log].join("").yellow);
         },
         err: function () {
             if (this.logMute || this.logLevel < 1) {
@@ -68,10 +112,8 @@ function __callee() {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[err]", __callee(), " ", log.red].join(""));
-        },
-        logLevel: 5,
-        logMute: false
+            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[err]", __callee(), " ", this.logLiteral, log].join("").red);
+        }
     };
 
 }());
