@@ -53,7 +53,7 @@ console.info = function () {
             }
 
             var log = ArrayMap.call(arguments, function (v) {
-                return "string" === typeof v ? v : inspect(v);
+                return "string" === typeof v ? v : inspect(v, {depth: 5});
             }).join(" ");
 
             util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[vrb]", __callee(), " ", this.logLiteral, log].join("").cyan, "\n");
