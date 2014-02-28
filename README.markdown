@@ -1,5 +1,7 @@
 # noboxout-log [![Build Status](https://secure.travis-ci.org/llafuente/noboxout-log.png?branch=master)](http://travis-ci.org/llafuente/noboxout-log)
 
+![NPM](https://nodei.co/npm/noboxout-log.png?compact=true)
+
 ## Introduction
 
 Basic log with: timestamps, colors and traces to stdout/stderr.

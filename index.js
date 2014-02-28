@@ -1,8 +1,10 @@
 var sep = require("path").sep;
-function __callee() {
+function __callee(num_traces) {
     var orig = Error.prepareStackTrace,
         err,
-        stack;
+        stack,
+        i,
+        traces_list = [];
 
     Error.prepareStackTrace = function () {
         return arguments[1];
@@ -15,22 +17,22 @@ function __callee() {
 
     Error.prepareStackTrace = orig;
 
-    return stack[1].getFileName().split(sep).slice(-1)[0] + ":" + stack[1].getLineNumber();
+    for (i = Math.min(stack.length - 1, num_traces); i >= 1; --i) {
+        traces_list.push(stack[i].getFileName().split(sep).slice(-1)[0] + ":" + stack[i].getLineNumber());
+    }    
+
+    return traces_list.join(",");
 }
 
-// for more debug control
-var old_log = console.log;
-console.log = function () {
-    var ar = Array.prototype.slice.call(arguments);
-    ar.unshift(__callee());
-    old_log.apply(console, ar);
-};
-var old_info = console.info;
-console.info = function () {
-    var ar = Array.prototype.slice.call(arguments);
-    ar.unshift(__callee());
-    old_info.apply(console, ar);
-};
+["log", "info", "warn", "error"].forEach(function (k) {
+    // for more debug control
+    var old = global.console[k];
+    global.console[k] = function () {
+        var ar = Array.prototype.slice.call(arguments);
+        ar.unshift(__callee(1));
+        old.apply(global.console, ar);
+    };
+});
 
 
 (function () {
@@ -46,6 +48,7 @@ console.info = function () {
         logLiteral: "",
         logLevel: 7,
         logMute: false,
+        logTraces: 2,
 
         verbose: function () {
             if (this.logMute || this.logLevel < 6) {
@@ -56,7 +59,7 @@ console.info = function () {
                 return "string" === typeof v ? v : inspect(v, {depth: 5});
             }).join(" ");
 
-            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[vrb]", __callee(), " ", this.logLiteral, log].join("").cyan, "\n");
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[vrb]", __callee(this.logTraces), " ", this.logLiteral, log].join("").cyan, "\n");
         },
         debug: function () {
             if (this.logMute || this.logLevel < 5) {
@@ -67,7 +70,7 @@ console.info = function () {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[dbg]", __callee(), " ", this.logLiteral, log].join("").blue, "\n");
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[dbg]", __callee(this.logTraces), " ", this.logLiteral, log].join("").blue, "\n");
         },
         log: function () {
             if (this.logMute || this.logLevel < 4) {
@@ -78,7 +81,7 @@ console.info = function () {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[log]", __callee(), " ", this.logLiteral, log].join("").white, "\n");
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[log]", __callee(this.logTraces), " ", this.logLiteral, log].join("").white, "\n");
         },
         info: function () {
             if (this.logMute || this.logLevel < 3) {
@@ -89,7 +92,7 @@ console.info = function () {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[inf]", __callee(), " ", this.logLiteral, log].join("").green, "\n");
+            util.print([new Date().toISOString().slice(0, 19).replace("T", " "), "[inf]", __callee(this.logTraces), " ", this.logLiteral, log].join("").green, "\n");
         },
         warn: function () {
             if (this.logMute || this.logLevel < 2) {
@@ -100,7 +103,7 @@ console.info = function () {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[wrn]", __callee(), " ", this.logLiteral, log].join("").yellow);
+            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[wrn]", __callee(this.logTraces), " ", this.logLiteral, log].join("").yellow);
         },
         err: function () {
             if (this.logMute || this.logLevel < 1) {
@@ -111,7 +114,7 @@ console.info = function () {
                 return "string" === typeof v ? v : inspect(v);
             }).join(" ");
 
-            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[err]", __callee(), " ", this.logLiteral, log].join("").red);
+            util.error([new Date().toISOString().slice(0, 19).replace("T", " "), "[err]", __callee(this.logTraces), " ", this.logLiteral, log].join("").red);
         }
     };
 
