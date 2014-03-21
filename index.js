@@ -4,7 +4,8 @@ function __callee(num_traces) {
         err,
         stack,
         i,
-        traces_list = [];
+        traces_list = [],
+        filename;
 
     Error.prepareStackTrace = function () {
         return arguments[1];
@@ -18,8 +19,10 @@ function __callee(num_traces) {
     Error.prepareStackTrace = orig;
 
     for (i = Math.min(stack.length - 1, num_traces); i >= 1; --i) {
-        traces_list.push(stack[i].getFileName().split(sep).slice(-1)[0] + ":" + stack[i].getLineNumber());
-    }    
+        filename = stack[i].getFileName().split(sep).slice(-1)[0].split(".");
+        filename.splice(-1, 1);
+        traces_list.push(filename.join(".") + ":" + stack[i].getLineNumber());
+    }
 
     return traces_list.join(",");
 }

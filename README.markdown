@@ -8,6 +8,7 @@ Basic log with: timestamps, colors and traces to stdout/stderr.
 Perfect for small aplications.
 Modify console.log/info adding trace parameter.
 
+
 ## Example
 
 ```
@@ -30,12 +31,21 @@ To edit level use: log.logLevel = &lt;integer&gt;
 * warning - stderr (2)
 * error - stderr (1)
 
+
 ### Mute log
 
 ```js
 log.logMute = true;
 ```
 
+
+### Traces
+
+How many stack item should be displayed ?
+
+```js
+log.logTraces = Number
+```
 
 ### Add to literal
 
@@ -57,20 +67,17 @@ log.logLiteral = "[xxx]";
 With [npm](http://npmjs.org) do:
 
 ```
-
 npm install noboxout-log
 
 ```
 
+
 ## test (travis-ci ready!)
 
-
 ```
-
 npm test
 // or
 node test.js
-
 ```
 
 ## license
